@@ -13,3 +13,48 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model User {
+  id            String          @id @default(uuid())
+  name          String
+  email         String          @unique
+  password      String
+  role          userRole
+  profile       Profile?
+  bookings      Booking[]
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  ClassSchedule ClassSchedule[]
+}
+
+model Profile {
+  id     String @id @default(uuid())
+  age    Int
+  gender String
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id])
+}
+
+model ClassSchedule {
+  id        String    @id @default(uuid())
+  date      DateTime
+  startTime DateTime
+  endTime   DateTime
+  trainer   User      @relation(fields: [trainerId], references: [id])
+  trainerId String
+  bookings  Booking[]
+}
+
+model Booking {
+  id              String        @id @default(uuid())
+  classScheduleId String
+  traineeId       String
+  classSchedule   ClassSchedule @relation(fields: [classScheduleId], references: [id])
+  trainee         User          @relation(fields: [traineeId], references: [id])
+}
+
+enum userRole {
+  ADMIN
+  TRAINER
+  TRAINEE
+}
