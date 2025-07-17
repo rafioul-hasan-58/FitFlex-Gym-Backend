@@ -2,11 +2,11 @@ import { User } from "../../../generated/prisma";
 import { prisma } from "../../utils/prismaClient";
 import status from "http-status";
 import bcrypt from "bcrypt";
-import AppError from "../../errors/APPError";
 import config from "../../config";
 import { IAuthData, IAuthUser } from "./auth.interface";
 import { createToken } from "../../utils/createToken";
 import jwt from "jsonwebtoken";
+import AppError from "../../errors/AppError";
 
 // register user
 const registerUser = async (payload: User) => {

@@ -4,12 +4,10 @@ import cookieParser from "cookie-parser";
 const app: Application = express();
 import status from "http-status";
 import router from "./app/routes";
+import globalErrorHandler from "./app/middlewares/globalErrorHandlar";
 
 app.use(
-  cors({
-    origin: "https://greeni-circle-client.vercel.app",
-    credentials: true,
-  })
+  cors()
 );
 app.use(cookieParser());
 
@@ -26,6 +24,9 @@ app.get("/", (req: Request, res: Response) => {
 app.use("/api", router);
 
 // global error handler
+app.use(globalErrorHandler);
+
+// not found handler
 app.use((req: Request, res: Response, next: NextFunction) => {
   res.status(status.NOT_FOUND).json({
     success: false,
