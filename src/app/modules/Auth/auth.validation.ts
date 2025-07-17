@@ -1,10 +1,13 @@
 import { z } from 'zod';
+import { userRole } from '../../../generated/prisma';
 
-export const createUserZodSchema = z.object({
+export const registerUserZodSchema = z.object({
     name: z.string().min(1, 'Name is required'),
     email: z.string().email('Invalid email format'),
     password: z.string().min(6, 'Password must be at least 6 characters'),
-    role: z.enum(['Admin', 'Trainer', 'Trainee']).optional(),
+    role: z.literal(userRole.Trainee, {
+        error: 'Only Trainee role is allowed for registration',
+    }),
 });
 
 export const loginUserZodSchema = z.object({

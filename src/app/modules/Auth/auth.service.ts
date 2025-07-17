@@ -1,4 +1,4 @@
-import { User } from "../../../generated/prisma";
+import { User, userRole } from "../../../generated/prisma";
 import { prisma } from "../../utils/prismaClient";
 import status from "http-status";
 import bcrypt from "bcrypt";
@@ -17,6 +17,9 @@ const registerUser = async (payload: User) => {
     });
     if (isUserExists) {
         throw new AppError(status.NOT_ACCEPTABLE, "This email is already in use");
+    }
+    if (payload.role === userRole.Trainer) {
+        throw new AppError(status.UNAUTHORIZED, 'You are not authorized to register as a Trainer')
     }
     const { password } = payload;
     // password hashing
