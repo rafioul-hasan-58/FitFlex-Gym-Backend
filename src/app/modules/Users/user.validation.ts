@@ -9,3 +9,5 @@ export const createTrainerZodSchema = z.object({
         error: 'Only Trainer role is allowed for registration',
     }),
 });
+
+

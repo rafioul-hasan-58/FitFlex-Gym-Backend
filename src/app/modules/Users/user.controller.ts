@@ -14,6 +14,7 @@ const createTrainer = catchAsync(async (req: Request, res: Response) => {
         Data: result,
     });
 });
-export const userController={
-    createTrainer
+
+export const userController = {
+    createTrainer,
 }

@@ -1,4 +1,4 @@
-import { User, userRole } from "../../../generated/prisma";
+import { ClassSchedule, User, userRole } from "../../../generated/prisma";
 import AppError from "../../errors/AppError";
 import { prisma } from "../../utils/prismaClient";
 import status from "http-status";
@@ -27,6 +27,8 @@ const createTrainer = async (payload: User) => {
     })
     return result;
 }
+
+
 export const userServices = {
     createTrainer
 }

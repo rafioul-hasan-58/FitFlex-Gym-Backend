@@ -3,13 +3,13 @@ import { AuthController } from "./auth.controller";
 import roleGured from "../../middlewares/roleGured";
 import { userRole } from "../../../generated/prisma";
 import validateRequest from "../../utils/validateRequest";
-import { changePasswordZodSchema, createUserZodSchema, loginUserZodSchema } from "./auth.validation";
+import { changePasswordZodSchema,  loginUserZodSchema, registerUserZodSchema } from "./auth.validation";
 
 const router = Router();
 
 router.post(
     "/register",
-    validateRequest(createUserZodSchema),
+    validateRequest(registerUserZodSchema),
     AuthController.registerUser
 );
 router.post(
