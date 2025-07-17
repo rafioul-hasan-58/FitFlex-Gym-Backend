@@ -3,6 +3,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 const app: Application = express();
 import status from "http-status";
+import router from "./app/routes";
 
 app.use(
   cors({
@@ -18,11 +19,11 @@ app.use(express.urlencoded({ extended: true }));
 
 app.get("/", (req: Request, res: Response) => {
   res.send({
-    Message: "Green Circle Server Is Running",
+    Message: "FitFlex-Gym Server Is Running",
   });
 });
 // all routes
-// app.use("/api", router);
+app.use("/api", router);
 
 // global error handler
 app.use((req: Request, res: Response, next: NextFunction) => {
