@@ -1,0 +1,1 @@
+export const paginationQueries: string[] = ['sortBy', 'sortOrder', 'limit', 'page']

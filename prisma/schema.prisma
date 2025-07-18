@@ -42,7 +42,10 @@ model Booking {
   traineeId       String
   classSchedule   ClassSchedule @relation(fields: [classScheduleId], references: [id])
   trainee         User          @relation(fields: [traineeId], references: [id])
-  @@unique([classScheduleId,traineeId]) // only one booking per trainee per classSchedule
+  createdAt       DateTime?     @default(now())
+  updatedAt       DateTime?     @updatedAt
+
+  @@unique([classScheduleId, traineeId]) // only one booking per trainee per classSchedule
 }
 
 enum userRole {

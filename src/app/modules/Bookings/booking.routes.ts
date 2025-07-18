@@ -13,5 +13,10 @@ router.post(
     roleGured(userRole.Trainee),
     bookingController.bookClassSchedule
 );
+router.get(
+    "/my-bookings",
+    roleGured(userRole.Trainee),
+    bookingController.getMyBookings
+);
 
 export const bookingRoutes = router;

@@ -1,8 +1,11 @@
 import status from "http-status";
-import { Booking } from "../../../generated/prisma";
+import { Booking, Prisma } from "../../../generated/prisma";
 import AppError from "../../errors/AppError";
 import { prisma } from "../../utils/prismaClient";
 import { IAuthUser } from "../Auth/auth.interface";
+import { TBookingFilterRequest } from "../../types/booking.filter";
+import { IPaginationOptions } from "../../types/pagination";
+import calculatePagination from "../../utils/calculatePagination";
 
 const bookClassSchedule = async (payload: Booking, user: IAuthUser) => {
     const classSchedule = await prisma.classSchedule.findUnique({
@@ -23,7 +26,7 @@ const bookClassSchedule = async (payload: Booking, user: IAuthUser) => {
         }
     });
 
-    if (existingTotalBooking.length >= 10) {
+    if (existingTotalBooking.length >= 1) {
         throw new AppError(
             status.BAD_REQUEST,
             "Class schedule is full. Maximum 10 trainees allowed per schedule"
@@ -56,6 +59,96 @@ const bookClassSchedule = async (payload: Booking, user: IAuthUser) => {
     return result;
 };
 
+const getMyBookings = async (
+    filters: TBookingFilterRequest,
+    paginationOptions: IPaginationOptions,
+    user: IAuthUser
+) => {
+    const { trainerName, startTime, endTime, date } = filters;
+    const { limit, page, skip, sortBy, sortOrder } = calculatePagination(paginationOptions);
+
+    const andConditions: Prisma.BookingWhereInput[] = [];
+    andConditions.push({
+        traineeId: user.userId
+    })
+
+    // Filter by trainer name
+    if (trainerName) {
+        andConditions.push({
+            classSchedule: {
+                trainer: {
+                    name: {
+                        contains: trainerName
+                    }
+                },
+            },
+        });
+    }
+    //filter by date
+    if (date) {
+        andConditions.push({
+            classSchedule: {
+                date: {
+                    equals: date
+                }
+            }
+        });
+    }
+    // Filter by start time
+    if (startTime) {
+        andConditions.push({
+            classSchedule: {
+                startTime: {
+                    equals: startTime
+                }
+            }
+        });
+    }
+    // 
+    // Filter by end time
+    if (endTime) {
+        andConditions.push({
+            classSchedule: {
+                endTime: {
+                    equals: endTime
+                }
+            }
+        });
+    }
+
+    const where: Prisma.BookingWhereInput =
+        andConditions.length > 0 ? { AND: andConditions } : {};
+
+    // Fetch paginated ideas
+    const bookings = await prisma.booking.findMany({
+        where,
+        skip,
+        take: limit,
+        orderBy: sortBy && sortOrder ? { [sortBy]: sortOrder } : { createdAt: "desc" },
+        include: {
+            classSchedule: {
+                include: {
+                    trainer: true
+                }
+            },
+
+        },
+    });
+
+    // Count total
+    const total = await prisma.booking.count({ where });
+
+    return {
+        meta: {
+            total,
+            page,
+            limit,
+        },
+        data: bookings,
+    };
+};
+
 export const bookingServices = {
-    bookClassSchedule
+    bookClassSchedule,
+    getMyBookings
 }
