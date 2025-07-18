@@ -10,12 +10,7 @@ import AppError from '../errors/AppError';
 const globalErrorHandler: ErrorRequestHandler = (err, req, res, _next): void => {
   let statusCode = 500;
   let message = 'Something went wrong!';
-  let errorDetails: TErrorSources = [
-    {
-      path: '',
-      message: 'Something went wrong',
-    },
-  ];
+  let errorDetails: TErrorSources | undefined;
 
   // Ensure err is an object before checking properties
   if (err instanceof ZodError) {
@@ -27,12 +22,6 @@ const globalErrorHandler: ErrorRequestHandler = (err, req, res, _next): void => 
   } else if (err instanceof AppError) {
     statusCode = err.statusCode;
     message = err.message;
-    errorDetails = [
-      {
-        path: '',
-        message: err.message,
-      },
-    ];
   } else if (err instanceof Error) {
     message = err.message;
     errorDetails = [
@@ -46,7 +35,7 @@ const globalErrorHandler: ErrorRequestHandler = (err, req, res, _next): void => 
   res.status(statusCode).json({
     success: false,
     message,
-    errorDetails,
+    ...(errorDetails && { errorDetails }),
     stack: config.NODE_ENV === 'development' ? err instanceof Error ? err.stack : null : null,
   });
 };

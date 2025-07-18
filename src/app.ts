@@ -22,7 +22,6 @@ app.get("/", (req: Request, res: Response) => {
 });
 // all routes
 app.use("/api", router);
-
 // global error handler
 app.use(globalErrorHandler);
 
@@ -31,7 +30,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
   res.status(status.NOT_FOUND).json({
     success: false,
     message: "API not found",
-    error: {
+    errorDetails: {
       path: req.originalUrl,
       message: "Your requested path is not found",
     },
