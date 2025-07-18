@@ -10,12 +10,7 @@ const AppError_1 = __importDefault(require("../errors/AppError"));
 const globalErrorHandler = (err, req, res, _next) => {
     let statusCode = 500;
     let message = 'Something went wrong!';
-    let errorDetails = [
-        {
-            path: '',
-            message: 'Something went wrong',
-        },
-    ];
+    let errorDetails;
     // Ensure err is an object before checking properties
     if (err instanceof zod_1.ZodError) {
         const simplifiedError = (0, handleZodError_1.default)(err);
@@ -26,12 +21,6 @@ const globalErrorHandler = (err, req, res, _next) => {
     else if (err instanceof AppError_1.default) {
         statusCode = err.statusCode;
         message = err.message;
-        errorDetails = [
-            {
-                path: '',
-                message: err.message,
-            },
-        ];
     }
     else if (err instanceof Error) {
         message = err.message;
@@ -42,11 +31,6 @@ const globalErrorHandler = (err, req, res, _next) => {
             },
         ];
     }
-    res.status(statusCode).json({
-        success: false,
-        message,
-        errorDetails,
-        stack: config_1.default.NODE_ENV === 'development' ? err instanceof Error ? err.stack : null : null,
-    });
+    res.status(statusCode).json(Object.assign(Object.assign({ success: false, message }, (errorDetails && { errorDetails })), { stack: config_1.default.NODE_ENV === 'development' ? err instanceof Error ? err.stack : null : null }));
 };
 exports.default = globalErrorHandler;

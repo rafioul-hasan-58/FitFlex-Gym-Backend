@@ -29,7 +29,7 @@ app.use((req, res, next) => {
     res.status(http_status_1.default.NOT_FOUND).json({
         success: false,
         message: "API not found",
-        error: {
+        errorDetails: {
             path: req.originalUrl,
             message: "Your requested path is not found",
         },

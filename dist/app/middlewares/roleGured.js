@@ -15,16 +15,18 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const config_1 = __importDefault(require("../config"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const prismaClient_1 = require("../utils/prismaClient");
+const AppError_1 = __importDefault(require("../errors/AppError"));
+const http_status_1 = __importDefault(require("http-status"));
 const roleGured = (...userRoles) => {
     return (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
         try {
             const token = req.headers.authorization;
             if (!token) {
-                throw new Error("You are not Authorized");
+                throw new AppError_1.default(http_status_1.default.NOT_FOUND, "Your token is missing");
             }
             const decodedUser = jsonwebtoken_1.default.verify(token, config_1.default.jwt_access_secret);
             if (userRoles.length && !userRoles.includes(decodedUser.role)) {
-                throw new Error("Forbidden");
+                throw new AppError_1.default(http_status_1.default.UNAUTHORIZED, "You are not authorized to access this route");
             }
             req.user = decodedUser;
             const isUserExists = yield prismaClient_1.prisma.user.findUnique({
@@ -33,7 +35,7 @@ const roleGured = (...userRoles) => {
                 },
             });
             if (!isUserExists) {
-                throw new Error("User not exists in auth");
+                throw new AppError_1.default(http_status_1.default.NOT_FOUND, "User not exists in auth");
             }
             next();
         }

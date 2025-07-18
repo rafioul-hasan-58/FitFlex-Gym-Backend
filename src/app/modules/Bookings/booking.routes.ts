@@ -4,6 +4,7 @@ import validateRequest from "../../utils/validateRequest";
 import { bookingZodSchema } from "./booking.validation";
 import roleGured from "../../middlewares/roleGured";
 import { userRole } from "../../../generated/prisma";
+import AdminGuard from "../../middlewares/AdminGuard";
 
 const router = Router();
 
@@ -12,6 +13,11 @@ router.post(
     validateRequest(bookingZodSchema),
     roleGured(userRole.Trainee),
     bookingController.bookClassSchedule
+);
+router.get(
+    "/all-bookings",
+    AdminGuard,
+    bookingController.getAllBookings
 );
 router.get(
     "/my-bookings",

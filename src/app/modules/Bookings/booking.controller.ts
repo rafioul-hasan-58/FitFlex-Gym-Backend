@@ -17,6 +17,17 @@ const bookClassSchedule = catchAsync(async (req: Request & { user?: any }, res: 
         Data: result,
     });
 });
+const getAllBookings = catchAsync(async (req: Request, res: Response) => {
+    const bookingFilters = pick(req.query, bookingFilterAbleFields);
+    const paginationOptions = pick(req.query, paginationQueries)
+    const result = await bookingServices.getAllBookings(bookingFilters, paginationOptions);
+    sendResponse(res, {
+        statusCode: status.OK,
+        success: true,
+        message: "All bookings fetched successfully",
+        Data: result,
+    });
+});
 const getMyBookings = catchAsync(async (req: Request & { user?: any }, res: Response) => {
     const bookingFilters = pick(req.query, bookingFilterAbleFields);
     const paginationOptions = pick(req.query, paginationQueries)
@@ -31,5 +42,6 @@ const getMyBookings = catchAsync(async (req: Request & { user?: any }, res: Resp
 
 export const bookingController = {
     bookClassSchedule,
-    getMyBookings
+    getMyBookings,
+    getAllBookings
 };

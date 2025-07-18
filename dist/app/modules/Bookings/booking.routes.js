@@ -1,0 +1,16 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.bookingRoutes = void 0;
+const express_1 = require("express");
+const booking_controller_1 = require("./booking.controller");
+const validateRequest_1 = __importDefault(require("../../utils/validateRequest"));
+const booking_validation_1 = require("./booking.validation");
+const roleGured_1 = __importDefault(require("../../middlewares/roleGured"));
+const prisma_1 = require("../../../generated/prisma");
+const router = (0, express_1.Router)();
+router.post("/book-class-schedule", (0, validateRequest_1.default)(booking_validation_1.bookingZodSchema), (0, roleGured_1.default)(prisma_1.userRole.Trainee), booking_controller_1.bookingController.bookClassSchedule);
+router.get("/my-bookings", (0, roleGured_1.default)(prisma_1.userRole.Trainee), booking_controller_1.bookingController.getMyBookings);
+exports.bookingRoutes = router;
