@@ -175,8 +175,8 @@ npm run dev
 **🌐 Live Server**
 [Click here](https://fitflex-gym-backend.vercel.app)
 
-**📬 Postman API Documentation**
-[Click here](https://geenify.postman.co/workspace/My-Workspace~2b0c34f1-9e0e-48ad-8815-5d975a2897cd/folder/39784613-56fe57b0-73e4-4ae4-b857-e6379814e06d?action=share&creator=39784613&ctx=documentation&active-environment=39784613-84bae6f1-2924-4cf4-b23f-7f8a5086fe56)
+**📬 Postman API**
+[Click here](https://geenify.postman.co/workspace/Job-tasks~93785eb5-4937-475a-949a-7faa3e236a71/collection/39784613-5296fdd1-299e-418a-a186-b742b65ae532?action=share&creator=39784613)
 
 
 
