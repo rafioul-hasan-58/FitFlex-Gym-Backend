@@ -34,10 +34,10 @@
 
 | Method | Endpoint          | Description                  |
 |--------|-------------------|------------------------------|
-| `POST` | `/auth/register` | Register a new trainee       |
-| `POST` | `/auth/login`  | Login for Users   |
-| `POST` | `/auth/refresh-token` | Get Refresh Token      |
-| `PATCH` | `/auth/change-password`  | Change Password  |
+| `POST` | `/api/auth/register` | Register a new trainee       |
+| `POST` | `/api/auth/login`  | Login for Users   |
+| `POST` | `/api/auth/refresh-token` | Get Refresh Token      |
+| `PATCH` | `/api/auth/change-password`  | Change Password  |
 
 ---
 
@@ -45,14 +45,14 @@
 
 | Method | Endpoint                      | Description                          |
 |--------|-------------------------------|--------------------------------------|
-| `POST`  | `/users/my-profile`        | Retrive User Profile          |
-| `POST`  | `/users/update-my-profile`        | Update User Profile          |
-| `GET`| `/class-schedules/get-all-class-schedules`        | Get all available class schedule              |
-| `GET`| `/class-schedules/get-class-schedule/:id`        | Get class schedule by id              |
-| `POST`  | `/bookings/book-class-schedule`        | Book class schedule           |
-| `GET`  | `/bookings/my-bookings`        | Get trainee bookings           |
-| `GET`  | `/bookings/get-booking/:id`        | Get trainee booking by id           |
-| `DELETE`  | `/bookings/cancel-booking/:id`        | Cancelled booked class           |
+| `POST`  | `/api/users/my-profile`        | Retrive User Profile          |
+| `POST`  | `/api/users/update-my-profile`        | Update User Profile          |
+| `GET`| `/api/class-schedules/get-all-class-schedules`        | Get all available class schedule              |
+| `GET`| `/api/class-schedules/get-class-schedule/:id`        | Get class schedule by id              |
+| `POST`  | `/api/bookings/book-class-schedule`        | Book class schedule           |
+| `GET`  | `/api/bookings/my-bookings`        | Get trainee bookings           |
+| `GET`  | `/api/bookings/get-booking/:id`        | Get trainee booking by id           |
+| `DELETE`  | `/api/bookings/cancel-booking/:id`        | Cancelled booked class           |
 
 
 ---
@@ -70,13 +70,13 @@
 
 | Method | Endpoint                    | Description                            |
 |--------|-----------------------------|----------------------------------------|
-| `POST` | `/users/create-trainer`        | Create a new trainer                   |
-| `PATCH` | `/users/update-trainer/:id`        | Update trainer                   |
-| `DELETE` | `/users/delete-trainer/:id`        | Delete trainer                   |
-| `POST`| `/class-schedules/add-class-schedule'` | Create class schedule              |
-| `GET`| `/class-schedules/get-all-class-schedules'` | Get all class schedules with filters and pagination            |
-| `PATCH`| `/class-schedules/update-class-schedule/:id'` | Update class schedule              |
-| `DELETE`| `/class-schedules/delete-class-schedule/:id'` | Delete class schedule              |
+| `POST` | `/api/users/create-trainer`        | Create a new trainer                   |
+| `PATCH` | `/api/users/update-trainer/:id`        | Update trainer                   |
+| `DELETE` | `/api/users/delete-trainer/:id`        | Delete trainer                   |
+| `POST`| `/api/class-schedules/add-class-schedule'` | Create class schedule              |
+| `GET`| `/api/class-schedules/get-all-class-schedules'` | Get all class schedules with filters and pagination            |
+| `PATCH`| `/api/class-schedules/update-class-schedule/:id'` | Update class schedule              |
+| `DELETE`| `/api/class-schedules/delete-class-schedule/:id'` | Delete class schedule              |
 
 
 ---
