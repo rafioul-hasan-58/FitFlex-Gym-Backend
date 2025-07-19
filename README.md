@@ -32,7 +32,7 @@
 
 ### 🔐 Auth
 
-## ExampleUrL:[https://fitflex-gym-backend.vercel.app/api/auth/register]
+#### ExampleURL : [https://fitflex-gym-backend.vercel.app/api/auth/register]
 
 | Method | Endpoint          | Description                  |
 |--------|-------------------|------------------------------|
