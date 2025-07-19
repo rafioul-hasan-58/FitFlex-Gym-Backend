@@ -32,6 +32,8 @@
 
 ### 🔐 Auth
 
+## ExampleUrL:[https://fitflex-gym-backend.vercel.app/api/auth/register]
+
 | Method | Endpoint          | Description                  |
 |--------|-------------------|------------------------------|
 | `POST` | `/api/auth/register` | Register a new trainee       |
