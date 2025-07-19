@@ -1,5 +1,5 @@
+import { userRole } from '@prisma/client';
 import { z } from 'zod';
-import { userRole } from '../../../generated/prisma';
 
 export const registerUserZodSchema = z.object({
     name: z.string().min(1, 'Name is required'),

@@ -4,7 +4,7 @@ import validateRequest from "../../utils/validateRequest";
 import { createTrainerZodSchema, updateTrainerZodSchema, updateUserZodSchema } from "./user.validation";
 import AdminGuard from "../../middlewares/AdminGuard";
 import roleGured from "../../middlewares/roleGured";
-import { userRole } from "../../../generated/prisma";
+import { userRole } from "@prisma/client";
 
 const router = Router();
 // trainer releted routes

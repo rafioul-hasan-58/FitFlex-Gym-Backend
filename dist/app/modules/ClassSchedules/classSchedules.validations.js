@@ -7,4 +7,4 @@ exports.addClassScheduleZodSchema = zod_1.z.object({
     startTime: zod_1.z.string().datetime({ message: "Invalid startTime format (ISO expected)" }),
     endTime: zod_1.z.string().datetime({ message: "Invalid endTime format (ISO expected)" }),
     trainerId: zod_1.z.string().uuid({ message: "Invalid trainerId" }),
-});
+}).strict();

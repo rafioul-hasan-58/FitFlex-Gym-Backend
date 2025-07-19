@@ -3,8 +3,8 @@ import { bookingController } from "./booking.controller";
 import validateRequest from "../../utils/validateRequest";
 import { bookingZodSchema } from "./booking.validation";
 import roleGured from "../../middlewares/roleGured";
-import { userRole } from "../../../generated/prisma";
 import AdminGuard from "../../middlewares/AdminGuard";
+import { userRole } from "@prisma/client";
 
 const router = Router();
 

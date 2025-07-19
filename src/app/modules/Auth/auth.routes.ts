@@ -1,9 +1,9 @@
 import { Router } from "express";
 import { AuthController } from "./auth.controller";
 import roleGured from "../../middlewares/roleGured";
-import { userRole } from "../../../generated/prisma";
 import validateRequest from "../../utils/validateRequest";
 import { changePasswordZodSchema,  loginUserZodSchema, registerUserZodSchema } from "./auth.validation";
+import { userRole } from "@prisma/client";
 
 const router = Router();
 

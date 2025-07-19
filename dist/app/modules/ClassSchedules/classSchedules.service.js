@@ -13,63 +13,53 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.classSchedulesService = void 0;
-const prisma_1 = require("../../../generated/prisma");
 const AppError_1 = __importDefault(require("../../errors/AppError"));
 const calculatePagination_1 = __importDefault(require("../../utils/calculatePagination"));
 const prismaClient_1 = require("../../utils/prismaClient");
 const http_status_1 = __importDefault(require("http-status"));
-const addClassSchedule = (payload) => __awaiter(void 0, void 0, void 0, function* () {
-    // Check if the class schedule for the given date already exists
-    const dateExistingSchedule = yield prismaClient_1.prisma.classSchedule.findMany({
+const client_1 = require("@prisma/client");
+const addClassSchedule = (scheduleData) => __awaiter(void 0, void 0, void 0, function* () {
+    // Check if the number of classes scheduled on the given date exceeds limit
+    const schedulesOnDate = yield prismaClient_1.prisma.classSchedule.count({
         where: {
-            date: payload.date
-        }
+            date: scheduleData.date,
+        },
     });
-    if (dateExistingSchedule.length > 4) {
-        throw new AppError_1.default(http_status_1.default.BAD_REQUEST, "You can not add more than 5 classes in a day");
+    if (schedulesOnDate >= 5) {
+        throw new AppError_1.default(http_status_1.default.BAD_REQUEST, 'Cannot add more than 5 classes on the same day');
     }
-    const isSeatAvailable = yield prismaClient_1.prisma.classSchedule.findFirst({
+    // Check for overlapping time slots for the trainer
+    const overlappingSchedule = yield prismaClient_1.prisma.classSchedule.findFirst({
         where: {
-            trainerId: payload.trainerId,
+            trainerId: scheduleData.trainerId,
             AND: [
-                {
-                    startTime: {
-                        lt: payload.endTime,
-                    },
-                },
-                {
-                    endTime: {
-                        gt: payload.startTime,
-                    },
-                },
+                { startTime: { lt: scheduleData.endTime } },
+                { endTime: { gt: scheduleData.startTime } },
             ],
         },
     });
-    if (isSeatAvailable) {
-        throw new AppError_1.default(http_status_1.default.BAD_REQUEST, "This time slot is already booked for this trainer");
+    if (overlappingSchedule) {
+        throw new AppError_1.default(http_status_1.default.BAD_REQUEST, 'This time slot is already booked for the trainer');
     }
-    // Check if the class duration is less or more than 2 hours
-    const start = new Date(payload.startTime);
-    const end = new Date(payload.endTime);
-    const durationInMilliseconds = end.getTime() - start.getTime();
-    const durationInHours = durationInMilliseconds / (1000 * 60 * 60);
-    if (durationInHours !== 2) {
-        throw new AppError_1.default(400, "Class duration must be exactly 2 hours");
+    // Validate class duration is exactly 2 hours
+    const startTime = new Date(scheduleData.startTime);
+    const endTime = new Date(scheduleData.endTime);
+    const durationHours = (endTime.getTime() - startTime.getTime()) / (1000 * 60 * 60);
+    if (durationHours !== 2) {
+        throw new AppError_1.default(http_status_1.default.BAD_REQUEST, 'Class duration must be exactly 2 hours');
     }
-    // Check if the trainer exists and has the correct role
+    // Verify the trainer exists and has the Trainer role
     const trainer = yield prismaClient_1.prisma.user.findUnique({
-        where: {
-            id: payload.trainerId,
-            role: prisma_1.userRole.Trainer
-        }
+        where: { id: scheduleData.trainerId },
     });
-    if (!trainer) {
-        throw new AppError_1.default(http_status_1.default.NOT_FOUND, "Trainer not found or invalid role");
+    if (!trainer || trainer.role !== client_1.userRole.Trainer) {
+        throw new AppError_1.default(http_status_1.default.NOT_FOUND, 'Trainer not found or invalid role');
     }
-    const result = yield prismaClient_1.prisma.classSchedule.create({
-        data: payload
+    // Create the class schedule
+    const createdSchedule = yield prismaClient_1.prisma.classSchedule.create({
+        data: scheduleData,
     });
-    return result;
+    return createdSchedule;
 });
 const getAllSchedule = (filters, paginationOptions) => __awaiter(void 0, void 0, void 0, function* () {
     const { traineeName, trainerName, startTime, endTime, date } = filters;

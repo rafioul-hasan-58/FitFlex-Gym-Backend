@@ -5,4 +5,4 @@ const zod_1 = require("zod");
 exports.bookingZodSchema = zod_1.z.object({
     classScheduleId: zod_1.z.string()
         .nonempty("Class Schedule ID is required")
-});
+}).strict();

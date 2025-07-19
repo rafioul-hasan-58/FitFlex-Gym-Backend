@@ -1,9 +1,9 @@
-import { ClassSchedule, User, userRole } from "../../../generated/prisma";
 import AppError from "../../errors/AppError";
 import { prisma } from "../../utils/prismaClient";
 import status from "http-status";
 import bcrypt from "bcrypt";
 import { IAuthUser } from "../Auth/auth.interface";
+import { User, userRole } from "@prisma/client";
 // trainer related services
 const createTrainer = async (payload: User) => {
     const isTrainerExists = await prisma.user.findUnique({
@@ -58,14 +58,14 @@ const deleteTrainer = async (id: string) => {
     }
 
     try {
-        const result = await prisma.$transaction(async (tx) => {
+        const result = await prisma.$transaction(async (tx:any) => {
             // 1. Find all ClassSchedules by this trainer
             const schedules = await tx.classSchedule.findMany({
                 where: { trainerId: id },
                 select: { id: true },
             });
 
-            const scheduleIds = schedules.map((schedule) => schedule.id);
+            const scheduleIds = schedules.map((schedule:any) => schedule.id);
 
             // 2. Delete all bookings related to these schedules
             if (scheduleIds.length > 0) {

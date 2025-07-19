@@ -33,7 +33,7 @@ const bookClassSchedule = (payload, user) => __awaiter(void 0, void 0, void 0, f
             classScheduleId: payload.classScheduleId,
         }
     });
-    if (existingTotalBooking.length >= 1) {
+    if (existingTotalBooking.length >= 10) {
         throw new AppError_1.default(http_status_1.default.BAD_REQUEST, "Class schedule is full. Maximum 10 trainees allowed per schedule");
     }
     //  Check if the user has already booked this class schedule

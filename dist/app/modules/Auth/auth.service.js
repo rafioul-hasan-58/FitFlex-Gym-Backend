@@ -13,7 +13,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthServices = void 0;
-const prisma_1 = require("../../../generated/prisma");
 const prismaClient_1 = require("../../utils/prismaClient");
 const http_status_1 = __importDefault(require("http-status"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
@@ -21,6 +20,7 @@ const config_1 = __importDefault(require("../../config"));
 const createToken_1 = require("../../utils/createToken");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const AppError_1 = __importDefault(require("../../errors/AppError"));
+const client_1 = require("@prisma/client");
 // register user
 const registerUser = (payload) => __awaiter(void 0, void 0, void 0, function* () {
     const isUserExists = yield prismaClient_1.prisma.user.findUnique({
@@ -31,7 +31,7 @@ const registerUser = (payload) => __awaiter(void 0, void 0, void 0, function* ()
     if (isUserExists) {
         throw new AppError_1.default(http_status_1.default.NOT_ACCEPTABLE, "This email is already in use");
     }
-    if (payload.role === prisma_1.userRole.Trainer) {
+    if (payload.role === client_1.userRole.Trainer) {
         throw new AppError_1.default(http_status_1.default.UNAUTHORIZED, 'You are not authorized to register as a Trainer');
     }
     const { password } = payload;

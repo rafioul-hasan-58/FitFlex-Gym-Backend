@@ -1,4 +1,3 @@
-import { ClassSchedule, Prisma, userRole } from "../../../generated/prisma";
 import AppError from "../../errors/AppError";
 import { TBookingFilterRequest, TScheduleFilterRequest } from "../../types/filters.types";
 import { IPaginationOptions } from "../../types/pagination";
@@ -6,68 +5,69 @@ import calculatePagination from "../../utils/calculatePagination";
 import { prisma } from "../../utils/prismaClient";
 import status from "http-status";
 import { IAuthUser } from "../Auth/auth.interface";
+import { ClassSchedule, Prisma, userRole } from "@prisma/client";
 
-const addClassSchedule = async (payload: ClassSchedule) => {
-    // Check if the class schedule for the given date already exists
-    const dateExistingSchedule = await prisma.classSchedule.findMany({
+const addClassSchedule = async (scheduleData: ClassSchedule) => {
+    // Check if the number of classes scheduled on the given date exceeds limit
+    const schedulesOnDate = await prisma.classSchedule.count({
         where: {
-            date: payload.date
-        }
-    })
-    if (dateExistingSchedule.length > 4) {
-        throw new AppError(status.BAD_REQUEST, "You can not add more than 5 classes in a day");
+            date: scheduleData.date,
+        },
+    });
+
+    if (schedulesOnDate >= 5) {
+        throw new AppError(
+            status.BAD_REQUEST,
+            'Cannot add more than 5 classes on the same day'
+        );
     }
-    const isSeatAvailable = await prisma.classSchedule.findFirst({
+
+    // Check for overlapping time slots for the trainer
+    const overlappingSchedule = await prisma.classSchedule.findFirst({
         where: {
-            trainerId: payload.trainerId,
+            trainerId: scheduleData.trainerId,
             AND: [
-                {
-                    startTime: {
-                        lt: payload.endTime,
-                    },
-                },
-                {
-                    endTime: {
-                        gt: payload.startTime,
-                    },
-                },
+                { startTime: { lt: scheduleData.endTime } },
+                { endTime: { gt: scheduleData.startTime } },
             ],
         },
     });
 
-    if (isSeatAvailable) {
+    if (overlappingSchedule) {
         throw new AppError(
             status.BAD_REQUEST,
-            "This time slot is already booked for this trainer"
+            'This time slot is already booked for the trainer'
         );
     }
-    // Check if the class duration is less or more than 2 hours
-    const start = new Date(payload.startTime);
-    const end = new Date(payload.endTime);
 
-    const durationInMilliseconds = end.getTime() - start.getTime();
-    const durationInHours = durationInMilliseconds / (1000 * 60 * 60);
+    // Validate class duration is exactly 2 hours
+    const startTime = new Date(scheduleData.startTime);
+    const endTime = new Date(scheduleData.endTime);
+    const durationHours = (endTime.getTime() - startTime.getTime()) / (1000 * 60 * 60);
 
-    if (durationInHours !== 2) {
-        throw new AppError(400, "Class duration must be exactly 2 hours");
+    if (durationHours !== 2) {
+        throw new AppError(status.BAD_REQUEST, 'Class duration must be exactly 2 hours');
     }
-    // Check if the trainer exists and has the correct role
+
+    // Verify the trainer exists and has the Trainer role
     const trainer = await prisma.user.findUnique({
-        where: {
-            id: payload.trainerId,
-            role: userRole.Trainer
-        }
-    })
-    if (!trainer) {
-        throw new AppError(status.NOT_FOUND, "Trainer not found or invalid role");
-    }
-    const result = await prisma.classSchedule.create({
-        data: payload
-    })
-    return result;
-}
+        where: { id: scheduleData.trainerId },
+    });
 
-const getAllSchedule = async (
+    if (!trainer || trainer.role !== userRole.Trainer) {
+        throw new AppError(status.NOT_FOUND, 'Trainer not found or invalid role');
+    }
+
+    // Create the class schedule
+    const createdSchedule = await prisma.classSchedule.create({
+        data: scheduleData,
+    });
+
+    return createdSchedule;
+};
+
+
+const getAllClassSchedules = async (
     filters: TScheduleFilterRequest,
     paginationOptions: IPaginationOptions,
 ) => {
@@ -158,7 +158,7 @@ const getAllSchedule = async (
         data: classSchedule,
     };
 };
-const getTrainerSchedule = async (
+const getTrainerSchedules = async (
     filters: TScheduleFilterRequest,
     paginationOptions: IPaginationOptions,
     user: IAuthUser
@@ -242,9 +242,67 @@ const getTrainerSchedule = async (
         data: classSchedule,
     };
 };
+const getClassScheduleById = async (id: string) => {
+    const schedule = await prisma.classSchedule.findUnique({
+        where: {
+            id
+        }
+    })
+    return schedule
+}
+const updateClassSchedule = async (id: string, payload: Partial<ClassSchedule>) => {
+    const classSchedule = await prisma.classSchedule.findUnique({
+        where: {
+            id
+        }
+    });
+    if (!classSchedule) {
+        throw new AppError(status.NOT_FOUND, 'Class Schedule not found!')
+    }
+    const result = await prisma.classSchedule.update({
+        where: {
+            id
+        },
+        data: payload
+    });
+    return result
+}
+const deleteClassSchedule = async (id: string) => {
+    const classSchedule = await prisma.classSchedule.findUnique({
+        where: { id }
+    });
+
+    if (!classSchedule) {
+        throw new AppError(status.NOT_FOUND, 'Class Schedule not found!');
+    }
+
+    try {
+        const result = await prisma.$transaction(async (tx) => {
+            // Step 1: Delete related bookings
+            await tx.booking.deleteMany({
+                where: { classScheduleId: id }
+            });
+
+            // Step 2: Delete the class schedule
+            const deletedSchedule = await tx.classSchedule.delete({
+                where: { id }
+            });
+
+            return deletedSchedule;
+        });
+
+        return result;
+    } catch (error) {
+        console.error('❌ Transaction failed:', error);
+        throw new AppError(status.INTERNAL_SERVER_ERROR, 'Failed to delete class schedule.');
+    }
+};
 
 export const classSchedulesService = {
     addClassSchedule,
-    getTrainerSchedule,
-    getAllSchedule
+    getTrainerSchedules,
+    getAllClassSchedules,
+    getClassScheduleById,
+    updateClassSchedule,
+    deleteClassSchedule
 }

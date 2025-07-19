@@ -17,10 +17,10 @@ const addClassSchedule = catchAsync(async (req: Request, res: Response) => {
         Data: result,
     });
 });
-const getAllSchedule = catchAsync(async (req: Request, res: Response) => {
+const getAllClassSchedules = catchAsync(async (req: Request, res: Response) => {
     const classScheduleFilters = pick(req.query, classScheduleFilterAbleFields);
     const paginationOptions = pick(req.query, paginationQueries)
-    const result = await classSchedulesService.getAllSchedule(classScheduleFilters, paginationOptions);
+    const result = await classSchedulesService.getAllClassSchedules(classScheduleFilters, paginationOptions);
     sendResponse(res, {
         statusCode: status.OK,
         success: true,
@@ -28,10 +28,10 @@ const getAllSchedule = catchAsync(async (req: Request, res: Response) => {
         Data: result,
     });
 });
-const getTrainerSchedule = catchAsync(async (req: Request & { user?: any }, res: Response) => {
+const getTrainerSchedules = catchAsync(async (req: Request & { user?: any }, res: Response) => {
     const classScheduleFilters = pick(req.query, classScheduleFilterAbleFields);
     const paginationOptions = pick(req.query, paginationQueries)
-    const result = await classSchedulesService.getTrainerSchedule(classScheduleFilters, paginationOptions, req.user as IAuthUser);
+    const result = await classSchedulesService.getTrainerSchedules(classScheduleFilters, paginationOptions, req.user as IAuthUser);
     sendResponse(res, {
         statusCode: status.OK,
         success: true,
@@ -39,8 +39,39 @@ const getTrainerSchedule = catchAsync(async (req: Request & { user?: any }, res:
         Data: result,
     });
 });
+const getClassScheduleById = catchAsync(async (req: Request, res: Response) => {
+    const result = await classSchedulesService.getClassScheduleById(req.params.id);
+    sendResponse(res, {
+        statusCode: status.OK,
+        success: true,
+        message: "Schedule fetched successfully",
+        Data: result,
+    });
+});
+const updateClassSchedule = catchAsync(async (req: Request, res: Response) => {
+    const result = await classSchedulesService.updateClassSchedule(req.params.id, req.body);
+    sendResponse(res, {
+        statusCode: status.OK,
+        success: true,
+        message: "Schedule updated successfully",
+        Data: result,
+    });
+});
+const deleteClassSchedule = catchAsync(async (req: Request, res: Response) => {
+    const result = await classSchedulesService.deleteClassSchedule(req.params.id);
+    sendResponse(res, {
+        statusCode: status.OK,
+        success: true,
+        message: "Schedule deleted successfully",
+        Data: result,
+    });
+});
 export const classSchedulesController = {
     addClassSchedule,
-    getTrainerSchedule,
-    getAllSchedule
+    getTrainerSchedules,
+    getAllClassSchedules,
+    getClassScheduleById,
+    updateClassSchedule,
+    deleteClassSchedule
+
 }

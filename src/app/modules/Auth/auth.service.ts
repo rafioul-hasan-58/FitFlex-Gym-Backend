@@ -1,4 +1,3 @@
-import { User, userRole } from "../../../generated/prisma";
 import { prisma } from "../../utils/prismaClient";
 import status from "http-status";
 import bcrypt from "bcrypt";
@@ -7,6 +6,7 @@ import { IAuthData, IAuthUser } from "./auth.interface";
 import { createToken } from "../../utils/createToken";
 import jwt from "jsonwebtoken";
 import AppError from "../../errors/AppError";
+import { User, userRole } from "@prisma/client";
 
 // register user
 const registerUser = async (payload: User) => {
