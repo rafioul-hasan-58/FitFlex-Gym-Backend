@@ -34,8 +34,10 @@
 
 | Method | Endpoint          | Description                  |
 |--------|-------------------|------------------------------|
-| `POST` | `/api/auth/signup` | Register a new trainee       |
-| `POST` | `/api/auth/login`  | Login for trainee & admin    |
+| `POST` | `/auth/register` | Register a new trainee       |
+| `POST` | `/auth/login`  | Login for Users   |
+| `POST` | `/auth/refresh-token` | Get Refresh Token      |
+| `PATCH` | `/auth/change-password`  | Change Password  |
 
 ---
 
@@ -43,10 +45,15 @@
 
 | Method | Endpoint                      | Description                          |
 |--------|-------------------------------|--------------------------------------|
-| `GET`  | `/api/trainee/profile`        | Get trainee profile (self)           |
-| `PATCH`| `/api/trainee/profile`        | Update trainee profile               |
-| `POST` | `/api/bookings`               | Book a class                         |
-| `GET`  | `/api/bookings/my-bookings`   | View own booked classes              |
+| `POST`  | `/users/my-profile`        | Retrive User Profile          |
+| `POST`  | `/users/update-my-profile`        | Update User Profile          |
+| `GET`| `/class-schedules/get-all-class-schedules`        | Get all available class schedule              |
+| `GET`| `/class-schedules/get-class-schedule/:id`        | Get class schedule by id              |
+| `POST`  | `/bookings/book-class-schedule`        | Book class schedule           |
+| `GET`  | `/bookings/my-bookings`        | Get trainee bookings           |
+| `GET`  | `/bookings/get-booking/:id`        | Get trainee booking by id           |
+| `DELETE`  | `/bookings/cancel-booking/:id`        | Cancelled booked class           |
+
 
 ---
 
@@ -54,7 +61,8 @@
 
 | Method | Endpoint                   | Description                    |
 |--------|----------------------------|--------------------------------|
-| `GET`  | `/api/trainer/schedule`    | View assigned class schedule   |
+| `GET`  | `/class-schedules/get-trainer-schedules`    | View assigned class schedule   |
+| `GET`  | `/class-schedules/get-class-schedule/:id`    | View assigned class schedule by id  |
 
 ---
 
@@ -62,12 +70,14 @@
 
 | Method | Endpoint                    | Description                            |
 |--------|-----------------------------|----------------------------------------|
-| `POST` | `/api/admin/trainer`        | Create a new trainer                   |
-| `POST` | `/api/admin/class-schedule` | Assign class schedule to a trainer     |
-| `GET`  | `/api/admin/class-schedule` | View all class schedules               |
-| `PATCH`| `/api/admin/class-schedule/:id` | Update class schedule              |
-| `DELETE`| `/api/admin/class-schedule/:id` | Delete class schedule              |
-| `GET`  | `/api/admin/bookings`       | View all bookings                      |
+| `POST` | `/users/create-trainer`        | Create a new trainer                   |
+| `PATCH` | `/users/update-trainer/:id`        | Update trainer                   |
+| `DELETE` | `/users/delete-trainer/:id`        | Delete trainer                   |
+| `POST`| `/class-schedules/add-class-schedule'` | Create class schedule              |
+| `GET`| `/class-schedules/get-all-class-schedules'` | Get all class schedules with filters and pagination            |
+| `PATCH`| `/class-schedules/update-class-schedule/:id'` | Update class schedule              |
+| `DELETE`| `/class-schedules/delete-class-schedule/:id'` | Delete class schedule              |
+
 
 ---
 ## 🛢️ Database Schema (Prisma)
