@@ -29,6 +29,17 @@ const bookClassSchedule = (0, catchAsync_1.default)((req, res) => __awaiter(void
         Data: result,
     });
 }));
+const getAllBookings = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const bookingFilters = (0, pick_1.default)(req.query, booking_constant_1.bookingFilterAbleFields);
+    const paginationOptions = (0, pick_1.default)(req.query, pagination_constant_1.paginationQueries);
+    const result = yield booking_service_1.bookingServices.getAllBookings(bookingFilters, paginationOptions);
+    (0, sendResponse_1.default)(res, {
+        statusCode: http_status_1.default.OK,
+        success: true,
+        message: "All bookings fetched successfully",
+        Data: result,
+    });
+}));
 const getMyBookings = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const bookingFilters = (0, pick_1.default)(req.query, booking_constant_1.bookingFilterAbleFields);
     const paginationOptions = (0, pick_1.default)(req.query, pagination_constant_1.paginationQueries);
@@ -42,5 +53,6 @@ const getMyBookings = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, 
 }));
 exports.bookingController = {
     bookClassSchedule,
-    getMyBookings
+    getMyBookings,
+    getAllBookings
 };

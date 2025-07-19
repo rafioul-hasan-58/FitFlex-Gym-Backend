@@ -10,7 +10,9 @@ const validateRequest_1 = __importDefault(require("../../utils/validateRequest")
 const booking_validation_1 = require("./booking.validation");
 const roleGured_1 = __importDefault(require("../../middlewares/roleGured"));
 const prisma_1 = require("../../../generated/prisma");
+const AdminGuard_1 = __importDefault(require("../../middlewares/AdminGuard"));
 const router = (0, express_1.Router)();
 router.post("/book-class-schedule", (0, validateRequest_1.default)(booking_validation_1.bookingZodSchema), (0, roleGured_1.default)(prisma_1.userRole.Trainee), booking_controller_1.bookingController.bookClassSchedule);
+router.get("/all-bookings", AdminGuard_1.default, booking_controller_1.bookingController.getAllBookings);
 router.get("/my-bookings", (0, roleGured_1.default)(prisma_1.userRole.Trainee), booking_controller_1.bookingController.getMyBookings);
 exports.bookingRoutes = router;

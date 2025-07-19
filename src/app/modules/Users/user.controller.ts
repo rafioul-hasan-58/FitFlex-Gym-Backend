@@ -14,7 +14,17 @@ const createTrainer = catchAsync(async (req: Request, res: Response) => {
         Data: result,
     });
 });
+const updateTrainer = catchAsync(async (req: Request, res: Response) => {
+    const result = await userServices.updateTrainer(req.params.id, req.body);
+    sendResponse(res, {
+        statusCode: status.OK,
+        success: true,
+        message: "Trainer updated successfully",
+        Data: result,
+    });
+});
 
 export const userController = {
     createTrainer,
+    updateTrainer
 }

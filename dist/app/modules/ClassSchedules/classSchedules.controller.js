@@ -17,6 +17,9 @@ const catchAsync_1 = __importDefault(require("../../utils/catchAsync"));
 const classSchedules_service_1 = require("./classSchedules.service");
 const sendResponse_1 = __importDefault(require("../../utils/sendResponse"));
 const http_status_1 = __importDefault(require("http-status"));
+const pick_1 = __importDefault(require("../../utils/pick"));
+const pagination_constant_1 = require("../../constant/pagination.constant");
+const classSchedule_constant_1 = require("../../constant/classSchedule.constant");
 const addClassSchedule = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield classSchedules_service_1.classSchedulesService.addClassSchedule(req.body);
     (0, sendResponse_1.default)(res, {
@@ -26,6 +29,30 @@ const addClassSchedule = (0, catchAsync_1.default)((req, res) => __awaiter(void 
         Data: result,
     });
 }));
+const getAllSchedule = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const classScheduleFilters = (0, pick_1.default)(req.query, classSchedule_constant_1.classScheduleFilterAbleFields);
+    const paginationOptions = (0, pick_1.default)(req.query, pagination_constant_1.paginationQueries);
+    const result = yield classSchedules_service_1.classSchedulesService.getAllSchedule(classScheduleFilters, paginationOptions);
+    (0, sendResponse_1.default)(res, {
+        statusCode: http_status_1.default.OK,
+        success: true,
+        message: "All ClassSchedule fetched successfully",
+        Data: result,
+    });
+}));
+const getTrainerSchedule = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const classScheduleFilters = (0, pick_1.default)(req.query, classSchedule_constant_1.classScheduleFilterAbleFields);
+    const paginationOptions = (0, pick_1.default)(req.query, pagination_constant_1.paginationQueries);
+    const result = yield classSchedules_service_1.classSchedulesService.getTrainerSchedule(classScheduleFilters, paginationOptions, req.user);
+    (0, sendResponse_1.default)(res, {
+        statusCode: http_status_1.default.OK,
+        success: true,
+        message: "My Schedule fetched successfully",
+        Data: result,
+    });
+}));
 exports.classSchedulesController = {
-    addClassSchedule
+    addClassSchedule,
+    getTrainerSchedule,
+    getAllSchedule
 };

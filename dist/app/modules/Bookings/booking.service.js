@@ -52,6 +52,79 @@ const bookClassSchedule = (payload, user) => __awaiter(void 0, void 0, void 0, f
     });
     return result;
 });
+const getAllBookings = (filters, paginationOptions) => __awaiter(void 0, void 0, void 0, function* () {
+    const { trainerName, startTime, endTime, date } = filters;
+    const { limit, page, skip, sortBy, sortOrder } = (0, calculatePagination_1.default)(paginationOptions);
+    const andConditions = [];
+    // Filter by trainer name
+    if (trainerName) {
+        andConditions.push({
+            classSchedule: {
+                trainer: {
+                    name: {
+                        contains: trainerName
+                    }
+                },
+            },
+        });
+    }
+    //filter by date
+    if (date) {
+        andConditions.push({
+            classSchedule: {
+                date: {
+                    equals: date
+                }
+            }
+        });
+    }
+    // Filter by start time
+    if (startTime) {
+        andConditions.push({
+            classSchedule: {
+                startTime: {
+                    equals: startTime
+                }
+            }
+        });
+    }
+    // 
+    // Filter by end time
+    if (endTime) {
+        andConditions.push({
+            classSchedule: {
+                endTime: {
+                    equals: endTime
+                }
+            }
+        });
+    }
+    const where = andConditions.length > 0 ? { AND: andConditions } : {};
+    // Fetch paginated ideas
+    const bookings = yield prismaClient_1.prisma.booking.findMany({
+        where,
+        skip,
+        take: limit,
+        orderBy: sortBy && sortOrder ? { [sortBy]: sortOrder } : { createdAt: "desc" },
+        include: {
+            classSchedule: {
+                include: {
+                    trainer: true
+                }
+            },
+        },
+    });
+    // Count total
+    const total = yield prismaClient_1.prisma.booking.count({ where });
+    return {
+        meta: {
+            total,
+            page,
+            limit,
+        },
+        data: bookings,
+    };
+});
 const getMyBookings = (filters, paginationOptions, user) => __awaiter(void 0, void 0, void 0, function* () {
     const { trainerName, startTime, endTime, date } = filters;
     const { limit, page, skip, sortBy, sortOrder } = (0, calculatePagination_1.default)(paginationOptions);
@@ -130,5 +203,6 @@ const getMyBookings = (filters, paginationOptions, user) => __awaiter(void 0, vo
 });
 exports.bookingServices = {
     bookClassSchedule,
-    getMyBookings
+    getMyBookings,
+    getAllBookings
 };

@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.classSchedulesService = void 0;
 const prisma_1 = require("../../../generated/prisma");
 const AppError_1 = __importDefault(require("../../errors/AppError"));
+const calculatePagination_1 = __importDefault(require("../../utils/calculatePagination"));
 const prismaClient_1 = require("../../utils/prismaClient");
 const http_status_1 = __importDefault(require("http-status"));
 const addClassSchedule = (payload) => __awaiter(void 0, void 0, void 0, function* () {
@@ -70,6 +71,160 @@ const addClassSchedule = (payload) => __awaiter(void 0, void 0, void 0, function
     });
     return result;
 });
+const getAllSchedule = (filters, paginationOptions) => __awaiter(void 0, void 0, void 0, function* () {
+    const { traineeName, trainerName, startTime, endTime, date } = filters;
+    const { limit, page, skip, sortBy, sortOrder } = (0, calculatePagination_1.default)(paginationOptions);
+    const andConditions = [];
+    // Filter by trainer name
+    if (trainerName) {
+        andConditions.push({
+            trainer: {
+                name: {
+                    contains: trainerName
+                }
+            }
+        });
+    }
+    // Filter by trainee name
+    if (traineeName) {
+        andConditions.push({
+            bookings: {
+                some: {
+                    trainee: {
+                        name: {
+                            contains: traineeName
+                        }
+                    }
+                }
+            }
+        });
+    }
+    //filter by date
+    if (date) {
+        andConditions.push({
+            date: {
+                equals: date
+            }
+        });
+    }
+    // Filter by start time
+    if (startTime) {
+        andConditions.push({
+            startTime: {
+                equals: startTime
+            }
+        });
+    }
+    // 
+    // Filter by end time
+    if (endTime) {
+        andConditions.push({
+            endTime: {
+                equals: endTime
+            }
+        });
+    }
+    const where = andConditions.length > 0 ? { AND: andConditions } : {};
+    // Fetch paginated ideas
+    const classSchedule = yield prismaClient_1.prisma.classSchedule.findMany({
+        where,
+        skip,
+        take: limit,
+        orderBy: sortBy && sortOrder ? { [sortBy]: sortOrder } : { createdAt: "desc" },
+        include: {
+            trainer: true,
+            bookings: {
+                include: {
+                    trainee: true
+                }
+            },
+        },
+    });
+    // Count total
+    const total = yield prismaClient_1.prisma.classSchedule.count({ where });
+    return {
+        meta: {
+            total,
+            page,
+            limit,
+        },
+        data: classSchedule,
+    };
+});
+const getTrainerSchedule = (filters, paginationOptions, user) => __awaiter(void 0, void 0, void 0, function* () {
+    const { traineeName, startTime, endTime, date } = filters;
+    const { limit, page, skip, sortBy, sortOrder } = (0, calculatePagination_1.default)(paginationOptions);
+    const andConditions = [];
+    andConditions.push({
+        trainerId: user.userId
+    });
+    // Filter by trainer name
+    if (traineeName) {
+        andConditions.push({
+            bookings: {
+                some: {
+                    trainee: {
+                        name: {
+                            contains: traineeName
+                        }
+                    }
+                }
+            }
+        });
+    }
+    //filter by date
+    if (date) {
+        andConditions.push({
+            date: {
+                equals: date
+            }
+        });
+    }
+    // Filter by start time
+    if (startTime) {
+        andConditions.push({
+            startTime: {
+                equals: startTime
+            }
+        });
+    }
+    // 
+    // Filter by end time
+    if (endTime) {
+        andConditions.push({
+            endTime: {
+                equals: endTime
+            }
+        });
+    }
+    const where = andConditions.length > 0 ? { AND: andConditions } : {};
+    // Fetch paginated ideas
+    const classSchedule = yield prismaClient_1.prisma.classSchedule.findMany({
+        where,
+        skip,
+        take: limit,
+        orderBy: sortBy && sortOrder ? { [sortBy]: sortOrder } : { createdAt: "desc" },
+        include: {
+            bookings: {
+                include: {
+                    trainee: true
+                }
+            },
+        },
+    });
+    // Count total
+    const total = yield prismaClient_1.prisma.classSchedule.count({ where });
+    return {
+        meta: {
+            total,
+            page,
+            limit,
+        },
+        data: classSchedule,
+    };
+});
 exports.classSchedulesService = {
-    addClassSchedule
+    addClassSchedule,
+    getTrainerSchedule,
+    getAllSchedule
 };

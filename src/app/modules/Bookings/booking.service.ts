@@ -6,7 +6,6 @@ import { IAuthUser } from "../Auth/auth.interface";
 import { TBookingFilterRequest } from "../../types/filters.types";
 import { IPaginationOptions } from "../../types/pagination";
 import calculatePagination from "../../utils/calculatePagination";
-import { get } from "http";
 
 const bookClassSchedule = async (payload: Booking, user: IAuthUser) => {
     const classSchedule = await prisma.classSchedule.findUnique({
