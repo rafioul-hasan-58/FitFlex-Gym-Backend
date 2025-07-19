@@ -252,12 +252,15 @@ const getTrainerSchedules = async (
     };
 };
 const getClassScheduleById = async (id: string) => {
-    const schedule = await prisma.classSchedule.findUnique({
+    const result = await prisma.classSchedule.findUnique({
         where: {
             id
         }
     })
-    return schedule
+    if(!result){
+        throw new AppError(status.NOT_FOUND,"Class schedule not found!")
+    }
+    return result
 }
 const updateClassSchedule = async (id: string, payload: Partial<ClassSchedule>) => {
     const classSchedule = await prisma.classSchedule.findUnique({

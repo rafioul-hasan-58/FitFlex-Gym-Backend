@@ -201,8 +201,40 @@ const getMyBookings = (filters, paginationOptions, user) => __awaiter(void 0, vo
         data: bookings,
     };
 });
+const cancelBooking = (id, user) => __awaiter(void 0, void 0, void 0, function* () {
+    const booking = yield prismaClient_1.prisma.booking.findUnique({
+        where: {
+            id
+        }
+    });
+    if ((booking === null || booking === void 0 ? void 0 : booking.traineeId) !== user.userId) {
+        throw new AppError_1.default(http_status_1.default.NOT_FOUND, "You are not authorized to cancel this booking");
+    }
+    if (!booking) {
+        throw new AppError_1.default(http_status_1.default.NOT_FOUND, "Booking not found!");
+    }
+    const result = yield prismaClient_1.prisma.booking.delete({
+        where: {
+            id
+        }
+    });
+    return result;
+});
+const getBookingById = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield prismaClient_1.prisma.booking.findUnique({
+        where: {
+            id
+        }
+    });
+    if (!result) {
+        throw new AppError_1.default(http_status_1.default.NOT_FOUND, "Booking not found!");
+    }
+    return result;
+});
 exports.bookingServices = {
     bookClassSchedule,
     getMyBookings,
-    getAllBookings
+    getAllBookings,
+    cancelBooking,
+    getBookingById
 };

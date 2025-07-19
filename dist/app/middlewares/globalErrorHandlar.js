@@ -4,7 +4,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const zod_1 = require("zod");
-const config_1 = __importDefault(require("../config"));
 const handleZodError_1 = __importDefault(require("./handleZodError"));
 const AppError_1 = __importDefault(require("../errors/AppError"));
 const globalErrorHandler = (err, req, res, _next) => {
@@ -16,7 +15,10 @@ const globalErrorHandler = (err, req, res, _next) => {
         const simplifiedError = (0, handleZodError_1.default)(err);
         statusCode = simplifiedError.statusCode;
         message = simplifiedError.message;
-        errorDetails = simplifiedError.errorDetails;
+        errorDetails = simplifiedError.errorDetails.map((detail) => ({
+            path: detail.field,
+            message: detail.message,
+        }));
     }
     else if (err instanceof AppError_1.default) {
         statusCode = err.statusCode;
@@ -31,6 +33,6 @@ const globalErrorHandler = (err, req, res, _next) => {
             },
         ];
     }
-    res.status(statusCode).json(Object.assign(Object.assign({ success: false, message }, (errorDetails && { errorDetails })), { stack: config_1.default.NODE_ENV === 'development' ? err instanceof Error ? err.stack : null : null }));
+    res.status(statusCode).json(Object.assign({ success: false, message }, (errorDetails && { errorDetails })));
 };
 exports.default = globalErrorHandler;

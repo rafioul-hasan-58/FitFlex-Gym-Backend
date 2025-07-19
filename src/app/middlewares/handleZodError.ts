@@ -1,12 +1,12 @@
 import { ZodError, ZodIssue } from 'zod';
-import { TErrorSources, TGenericErrorResponse } from '../types/errors';
+import { TZodErrorSources, TZodGenericErrorResponse } from '../types/errors';
 
-const handleZodError = (err: ZodError): TGenericErrorResponse => {
-  const errorDetails: TErrorSources = err.issues.map((issue: ZodIssue) => {
+const handleZodError = (err: ZodError): TZodGenericErrorResponse => {
+  const errorDetails: TZodErrorSources = err.issues.map((issue: ZodIssue) => {
     const rawPath = issue?.path[issue.path.length - 1];
-    const path = typeof rawPath === 'string' || typeof rawPath === 'number' ? rawPath : String(rawPath);
+    const field = typeof rawPath === 'string' || typeof rawPath === 'number' ? rawPath : String(rawPath);
     return {
-      path,
+      field,
       message: issue.message,
     };
   });

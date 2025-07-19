@@ -17,7 +17,10 @@ const globalErrorHandler: ErrorRequestHandler = (err, req, res, _next): void => 
     const simplifiedError = handleZodError(err);
     statusCode = simplifiedError.statusCode;
     message = simplifiedError.message;
-    errorDetails = simplifiedError.errorDetails
+    errorDetails = simplifiedError.errorDetails.map((detail: { field: string | number; message: string }) => ({
+      path: detail.field,
+      message: detail.message,
+    }))
 
   } else if (err instanceof AppError) {
     statusCode = err.statusCode;
@@ -36,7 +39,6 @@ const globalErrorHandler: ErrorRequestHandler = (err, req, res, _next): void => 
     success: false,
     message,
     ...(errorDetails && { errorDetails }),
-    stack: config.NODE_ENV === 'development' ? err instanceof Error ? err.stack : null : null,
   });
 };
 

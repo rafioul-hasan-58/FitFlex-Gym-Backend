@@ -21,7 +21,7 @@ router.post(
     "/refresh-token",
     AuthController.refreshToken
 );
-router.post(
+router.patch(
     "/change-password",
     validateRequest(changePasswordZodSchema),
     roleGured(userRole.Admin, userRole.Trainee, userRole.Trainer),

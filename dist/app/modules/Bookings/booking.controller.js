@@ -51,8 +51,28 @@ const getMyBookings = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, 
         Data: result,
     });
 }));
+const getBookingById = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield booking_service_1.bookingServices.getBookingById(req.params.id);
+    (0, sendResponse_1.default)(res, {
+        statusCode: http_status_1.default.OK,
+        success: true,
+        message: "Booking fetched successfully",
+        Data: result,
+    });
+}));
+const cancelBooking = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield booking_service_1.bookingServices.cancelBooking(req.params.id, req.user);
+    (0, sendResponse_1.default)(res, {
+        statusCode: http_status_1.default.OK,
+        success: true,
+        message: "My booking cancelled successfully",
+        Data: result,
+    });
+}));
 exports.bookingController = {
     bookClassSchedule,
     getMyBookings,
-    getAllBookings
+    getAllBookings,
+    getBookingById,
+    cancelBooking
 };

@@ -15,4 +15,6 @@ const router = (0, express_1.Router)();
 router.post("/book-class-schedule", (0, validateRequest_1.default)(booking_validation_1.bookingZodSchema), (0, roleGured_1.default)(client_1.userRole.Trainee), booking_controller_1.bookingController.bookClassSchedule);
 router.get("/all-bookings", AdminGuard_1.default, booking_controller_1.bookingController.getAllBookings);
 router.get("/my-bookings", (0, roleGured_1.default)(client_1.userRole.Trainee), booking_controller_1.bookingController.getMyBookings);
+router.get("/get-booking/:id", (0, roleGured_1.default)(client_1.userRole.Trainee, client_1.userRole.Admin), booking_controller_1.bookingController.getBookingById);
+router.delete("/cancel-booking/:id", (0, roleGured_1.default)(client_1.userRole.Trainee), booking_controller_1.bookingController.cancelBooking);
 exports.bookingRoutes = router;
