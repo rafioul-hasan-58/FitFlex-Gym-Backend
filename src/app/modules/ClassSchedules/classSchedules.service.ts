@@ -7,65 +7,74 @@ import status from "http-status";
 import { IAuthUser } from "../Auth/auth.interface";
 import { ClassSchedule, Prisma, userRole } from "@prisma/client";
 
-const addClassSchedule = async (scheduleData: ClassSchedule) => {
-    // Check if the number of classes scheduled on the given date exceeds limit
-    const schedulesOnDate = await prisma.classSchedule.count({
-        where: {
-            date: scheduleData.date,
-        },
-    });
+const addClassSchedule = async (classScheduleData: ClassSchedule) => {
+    const { date, startTime, endTime, trainerId } = classScheduleData;
 
-    if (schedulesOnDate >= 5) {
+    // Check if the trainer exists and is authorized
+    const trainer = await prisma.user.findUnique({ where: { id: trainerId } });
+    if (!trainer || trainer.role !== userRole.Trainer) {
+        throw new AppError(status.BAD_REQUEST, "Invalid or unauthorized trainer");
+    }
+
+    // Normalize and prepare date/time values
+    const dateString = new Date(date).toISOString().split("T")[0];
+    const classStart = new Date(`${dateString}T${startTime}Z`);
+    const classEnd = new Date(`${dateString}T${endTime}Z`);
+    const classDate = new Date(`${dateString}T00:00:00Z`);
+
+    // Validate class duration
+    const classDurationInHours =
+        (classEnd.getTime() - classStart.getTime()) / (1000 * 60 * 60);
+    if (classDurationInHours !== 2) {
         throw new AppError(
             status.BAD_REQUEST,
-            'Cannot add more than 5 classes on the same day'
+            "Each class must be exactly 2 hours long"
         );
     }
 
-    // Check for overlapping time slots for the trainer
-    const overlappingSchedule = await prisma.classSchedule.findFirst({
+    // Check max class limit for the day
+    const scheduledClassesCount = await prisma.classSchedule.count({
+        where: { date: classDate },
+    });
+
+    if (scheduledClassesCount >= 5) {
+        throw new AppError(
+            status.BAD_REQUEST,
+            "Cannot create more than 5 class schedules per day"
+        );
+    }
+
+    // Check for schedule conflict for the same trainer
+    const conflictingSchedule = await prisma.classSchedule.findFirst({
         where: {
-            trainerId: scheduleData.trainerId,
+            date: classDate,
+            trainerId,
             AND: [
-                { startTime: { lt: scheduleData.endTime } },
-                { endTime: { gt: scheduleData.startTime } },
+                { startTime: { lt: classEnd } },
+                { endTime: { gt: classStart } },
             ],
         },
     });
 
-    if (overlappingSchedule) {
+    if (conflictingSchedule) {
         throw new AppError(
             status.BAD_REQUEST,
-            'This time slot is already booked for the trainer'
+            "Trainer already has a schedule during this time slot"
         );
     }
 
-    // Validate class duration is exactly 2 hours
-    const startTime = new Date(scheduleData.startTime);
-    const endTime = new Date(scheduleData.endTime);
-    const durationHours = (endTime.getTime() - startTime.getTime()) / (1000 * 60 * 60);
-
-    if (durationHours !== 2) {
-        throw new AppError(status.BAD_REQUEST, 'Class duration must be exactly 2 hours');
-    }
-
-    // Verify the trainer exists and has the Trainer role
-    const trainer = await prisma.user.findUnique({
-        where: { id: scheduleData.trainerId },
-    });
-
-    if (!trainer || trainer.role !== userRole.Trainer) {
-        throw new AppError(status.NOT_FOUND, 'Trainer not found or invalid role');
-    }
-
-    // Create the class schedule
+    // Create new class schedule
     const createdSchedule = await prisma.classSchedule.create({
-        data: scheduleData,
+        data: {
+            date: classDate,
+            startTime: classStart,
+            endTime: classEnd,
+            trainerId,
+        },
     });
 
     return createdSchedule;
 };
-
 
 const getAllClassSchedules = async (
     filters: TScheduleFilterRequest,

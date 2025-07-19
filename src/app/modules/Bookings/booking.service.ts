@@ -249,9 +249,21 @@ const cancelBooking = async (id: string, user: IAuthUser) => {
     });
     return result
 }
+const getBookingById = async (id: string) => {
+    const result = await prisma.booking.findUnique({
+        where: {
+            id
+        }
+    })
+    if (!result) {
+        throw new AppError(status.NOT_FOUND, "Booking not found!")
+    }
+    return result
+}
 export const bookingServices = {
     bookClassSchedule,
     getMyBookings,
     getAllBookings,
-    cancelBooking
+    cancelBooking,
+    getBookingById
 }

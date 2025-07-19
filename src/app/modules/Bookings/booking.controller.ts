@@ -39,8 +39,17 @@ const getMyBookings = catchAsync(async (req: Request & { user?: any }, res: Resp
         Data: result,
     });
 });
+const getBookingById = catchAsync(async (req: Request, res: Response) => {
+    const result = await bookingServices.getBookingById(req.params.id);
+    sendResponse(res, {
+        statusCode: status.OK,
+        success: true,
+        message: "Booking fetched successfully",
+        Data: result,
+    });
+});
 const cancelBooking = catchAsync(async (req: Request & { user?: any }, res: Response) => {
-    const result = await bookingServices.cancelBooking(req.params.id,req.user as IAuthUser);
+    const result = await bookingServices.cancelBooking(req.params.id, req.user as IAuthUser);
     sendResponse(res, {
         statusCode: status.OK,
         success: true,
@@ -53,5 +62,6 @@ export const bookingController = {
     bookClassSchedule,
     getMyBookings,
     getAllBookings,
+    getBookingById,
     cancelBooking
 };

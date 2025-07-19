@@ -24,6 +24,11 @@ router.get(
     roleGured(userRole.Trainee),
     bookingController.getMyBookings
 );
+router.get(
+    "/get-booking/:id",
+    roleGured(userRole.Trainee, userRole.Admin),
+    bookingController.getBookingById
+);
 router.delete(
     "/cancel-booking/:id",
     roleGured(userRole.Trainee),
