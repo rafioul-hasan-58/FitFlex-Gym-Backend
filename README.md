@@ -292,8 +292,8 @@ npm run dev
 
 ## 👨‍💻 Developer
 
-**Rafioul Hasan Sourob**  
-📧 rafioulhasan2@gmail.com 
-📞 +8801752966422
-🔗 [Portfolio](https://rafioul-sourav-portfolio.vercel.app)  
+### Rafioul Hasan Sourob
+##### 📧 rafioulhasan2@gmail.com 
+##### 📞 +8801752966422
+##### 🔗 [Portfolio](https://rafioul-sourav-portfolio.vercel.app)  
 
