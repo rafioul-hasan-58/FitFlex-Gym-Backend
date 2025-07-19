@@ -21,8 +21,23 @@ exports.addClassScheduleZodSchema = zod_1.z.object({
     trainerId: zod_1.z.string().nonempty("Trainer ID is required"),
 }).strict();
 exports.updateClassScheduleZodSchema = zod_1.z.object({
-    date: zod_1.z.string().datetime({ message: "Invalid date format (ISO expected)" }).optional(),
-    startTime: zod_1.z.string().datetime({ message: "Invalid startTime format (ISO expected)" }).optional(),
-    endTime: zod_1.z.string().datetime({ message: "Invalid endTime format (ISO expected)" }).optional(),
-    trainerId: zod_1.z.string().uuid({ message: "Invalid trainerId" }).optional(),
+    date: zod_1.z
+        .string()
+        .nonempty("Date is required")
+        .refine((val) => !isNaN(Date.parse(val)), {
+        message: "Invalid date format",
+    })
+        .optional(),
+    startTime: zod_1.z
+        .string()
+        .nonempty("Start time is required")
+        .regex(timeRegex, "Start time must be in HH:mm:ss format")
+        .optional(),
+    endTime: zod_1.z
+        .string()
+        .nonempty("End time is required")
+        .regex(timeRegex, "End time must be in HH:mm:ss format")
+        .optional(),
+    trainerId: zod_1.z.string().nonempty("Trainer ID is required")
+        .optional(),
 }).strict();

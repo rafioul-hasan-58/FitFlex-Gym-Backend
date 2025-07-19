@@ -16,8 +16,8 @@ router.post(
     classSchedulesController.addClassSchedule
 );
 router.get(
-    '/get-all-schedules',
-    AdminGuard,
+    '/get-all-class-schedules',
+    roleGured(userRole.Admin,userRole.Trainee),
     classSchedulesController.getAllClassSchedules
 );
 router.get(

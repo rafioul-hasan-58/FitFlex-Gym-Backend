@@ -13,7 +13,7 @@ const roleGured_1 = __importDefault(require("../../middlewares/roleGured"));
 const client_1 = require("@prisma/client");
 const router = (0, express_1.Router)();
 router.post('/add-class-schedule', AdminGuard_1.default, (0, validateRequest_1.default)(classSchedules_validations_1.addClassScheduleZodSchema), classSchedules_controller_1.classSchedulesController.addClassSchedule);
-router.get('/get-all-schedules', AdminGuard_1.default, classSchedules_controller_1.classSchedulesController.getAllClassSchedules);
+router.get('/get-all-class-schedules', (0, roleGured_1.default)(client_1.userRole.Admin, client_1.userRole.Trainee), classSchedules_controller_1.classSchedulesController.getAllClassSchedules);
 router.get('/get-trainer-schedules', (0, roleGured_1.default)(client_1.userRole.Trainer), classSchedules_controller_1.classSchedulesController.getTrainerSchedules);
 router.get('/get-class-schedule/:id', (0, roleGured_1.default)(client_1.userRole.Trainer, client_1.userRole.Admin, client_1.userRole.Trainee), classSchedules_controller_1.classSchedulesController.getClassScheduleById);
 router.patch('/update-class-schedule/:id', AdminGuard_1.default, (0, validateRequest_1.default)(classSchedules_validations_1.updateClassScheduleZodSchema), classSchedules_controller_1.classSchedulesController.updateClassSchedule);
