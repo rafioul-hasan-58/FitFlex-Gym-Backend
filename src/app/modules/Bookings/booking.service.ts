@@ -26,7 +26,7 @@ const bookClassSchedule = async (payload: Booking, user: IAuthUser) => {
         }
     });
 
-    if (existingTotalBooking.length >= 1) {
+    if (existingTotalBooking.length >= 10) {
         throw new AppError(
             status.BAD_REQUEST,
             "Class schedule is full. Maximum 10 trainees allowed per schedule"
