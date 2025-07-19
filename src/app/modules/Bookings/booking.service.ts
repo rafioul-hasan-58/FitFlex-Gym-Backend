@@ -230,9 +230,28 @@ const getMyBookings = async (
         data: bookings,
     };
 };
-
+const cancelBooking = async (id: string, user: IAuthUser) => {
+    const booking = await prisma.booking.findUnique({
+        where: {
+            id
+        }
+    });
+    if (booking?.traineeId !== user.userId) {
+        throw new AppError(status.NOT_FOUND, "You are not authorized to cancel this booking")
+    }
+    if (!booking) {
+        throw new AppError(status.NOT_FOUND, "Booking not found!");
+    }
+    const result = await prisma.booking.delete({
+        where: {
+            id
+        }
+    });
+    return result
+}
 export const bookingServices = {
     bookClassSchedule,
     getMyBookings,
-    getAllBookings
+    getAllBookings,
+    cancelBooking
 }

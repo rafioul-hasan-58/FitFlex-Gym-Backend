@@ -24,5 +24,10 @@ router.get(
     roleGured(userRole.Trainee),
     bookingController.getMyBookings
 );
+router.delete(
+    "/cancel-booking/:id",
+    roleGured(userRole.Trainee),
+    bookingController.cancelBooking
+);
 
 export const bookingRoutes = router;

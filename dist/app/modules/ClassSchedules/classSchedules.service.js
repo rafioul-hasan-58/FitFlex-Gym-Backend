@@ -61,7 +61,7 @@ const addClassSchedule = (scheduleData) => __awaiter(void 0, void 0, void 0, fun
     });
     return createdSchedule;
 });
-const getAllSchedule = (filters, paginationOptions) => __awaiter(void 0, void 0, void 0, function* () {
+const getAllClassSchedules = (filters, paginationOptions) => __awaiter(void 0, void 0, void 0, function* () {
     const { traineeName, trainerName, startTime, endTime, date } = filters;
     const { limit, page, skip, sortBy, sortOrder } = (0, calculatePagination_1.default)(paginationOptions);
     const andConditions = [];
@@ -141,7 +141,7 @@ const getAllSchedule = (filters, paginationOptions) => __awaiter(void 0, void 0,
         data: classSchedule,
     };
 });
-const getTrainerSchedule = (filters, paginationOptions, user) => __awaiter(void 0, void 0, void 0, function* () {
+const getTrainerSchedules = (filters, paginationOptions, user) => __awaiter(void 0, void 0, void 0, function* () {
     const { traineeName, startTime, endTime, date } = filters;
     const { limit, page, skip, sortBy, sortOrder } = (0, calculatePagination_1.default)(paginationOptions);
     const andConditions = [];
@@ -213,8 +213,62 @@ const getTrainerSchedule = (filters, paginationOptions, user) => __awaiter(void 
         data: classSchedule,
     };
 });
+const getClassScheduleById = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    const schedule = yield prismaClient_1.prisma.classSchedule.findUnique({
+        where: {
+            id
+        }
+    });
+    return schedule;
+});
+const updateClassSchedule = (id, payload) => __awaiter(void 0, void 0, void 0, function* () {
+    const classSchedule = yield prismaClient_1.prisma.classSchedule.findUnique({
+        where: {
+            id
+        }
+    });
+    if (!classSchedule) {
+        throw new AppError_1.default(http_status_1.default.NOT_FOUND, 'Class Schedule not found!');
+    }
+    const result = yield prismaClient_1.prisma.classSchedule.update({
+        where: {
+            id
+        },
+        data: payload
+    });
+    return result;
+});
+const deleteClassSchedule = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    const classSchedule = yield prismaClient_1.prisma.classSchedule.findUnique({
+        where: { id }
+    });
+    if (!classSchedule) {
+        throw new AppError_1.default(http_status_1.default.NOT_FOUND, 'Class Schedule not found!');
+    }
+    try {
+        const result = yield prismaClient_1.prisma.$transaction((tx) => __awaiter(void 0, void 0, void 0, function* () {
+            // Step 1: Delete related bookings
+            yield tx.booking.deleteMany({
+                where: { classScheduleId: id }
+            });
+            // Step 2: Delete the class schedule
+            const deletedSchedule = yield tx.classSchedule.delete({
+                where: { id }
+            });
+            return deletedSchedule;
+        }));
+        return result;
+    }
+    catch (error) {
+        console.error('❌ Transaction failed:', error);
+        throw new AppError_1.default(http_status_1.default.INTERNAL_SERVER_ERROR, 'Failed to delete class schedule.');
+    }
+});
 exports.classSchedulesService = {
     addClassSchedule,
-    getTrainerSchedule,
-    getAllSchedule
+    getTrainerSchedules,
+    getAllClassSchedules,
+    getClassScheduleById,
+    updateClassSchedule,
+    deleteClassSchedule
 };

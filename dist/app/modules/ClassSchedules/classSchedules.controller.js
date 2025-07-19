@@ -29,10 +29,10 @@ const addClassSchedule = (0, catchAsync_1.default)((req, res) => __awaiter(void 
         Data: result,
     });
 }));
-const getAllSchedule = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const getAllClassSchedules = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const classScheduleFilters = (0, pick_1.default)(req.query, classSchedule_constant_1.classScheduleFilterAbleFields);
     const paginationOptions = (0, pick_1.default)(req.query, pagination_constant_1.paginationQueries);
-    const result = yield classSchedules_service_1.classSchedulesService.getAllSchedule(classScheduleFilters, paginationOptions);
+    const result = yield classSchedules_service_1.classSchedulesService.getAllClassSchedules(classScheduleFilters, paginationOptions);
     (0, sendResponse_1.default)(res, {
         statusCode: http_status_1.default.OK,
         success: true,
@@ -40,10 +40,10 @@ const getAllSchedule = (0, catchAsync_1.default)((req, res) => __awaiter(void 0,
         Data: result,
     });
 }));
-const getTrainerSchedule = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const getTrainerSchedules = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const classScheduleFilters = (0, pick_1.default)(req.query, classSchedule_constant_1.classScheduleFilterAbleFields);
     const paginationOptions = (0, pick_1.default)(req.query, pagination_constant_1.paginationQueries);
-    const result = yield classSchedules_service_1.classSchedulesService.getTrainerSchedule(classScheduleFilters, paginationOptions, req.user);
+    const result = yield classSchedules_service_1.classSchedulesService.getTrainerSchedules(classScheduleFilters, paginationOptions, req.user);
     (0, sendResponse_1.default)(res, {
         statusCode: http_status_1.default.OK,
         success: true,
@@ -51,8 +51,38 @@ const getTrainerSchedule = (0, catchAsync_1.default)((req, res) => __awaiter(voi
         Data: result,
     });
 }));
+const getClassScheduleById = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield classSchedules_service_1.classSchedulesService.getClassScheduleById(req.params.id);
+    (0, sendResponse_1.default)(res, {
+        statusCode: http_status_1.default.OK,
+        success: true,
+        message: "Schedule fetched successfully",
+        Data: result,
+    });
+}));
+const updateClassSchedule = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield classSchedules_service_1.classSchedulesService.updateClassSchedule(req.params.id, req.body);
+    (0, sendResponse_1.default)(res, {
+        statusCode: http_status_1.default.OK,
+        success: true,
+        message: "Schedule updated successfully",
+        Data: result,
+    });
+}));
+const deleteClassSchedule = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield classSchedules_service_1.classSchedulesService.deleteClassSchedule(req.params.id);
+    (0, sendResponse_1.default)(res, {
+        statusCode: http_status_1.default.OK,
+        success: true,
+        message: "Schedule deleted successfully",
+        Data: result,
+    });
+}));
 exports.classSchedulesController = {
     addClassSchedule,
-    getTrainerSchedule,
-    getAllSchedule
+    getTrainerSchedules,
+    getAllClassSchedules,
+    getClassScheduleById,
+    updateClassSchedule,
+    deleteClassSchedule
 };
