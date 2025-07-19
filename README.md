@@ -172,11 +172,128 @@ npm run dev
 ```
 **📍 http://localhost:5000/api**
 
-**🌐 Live Server**
-[Click here](https://fitflex-gym-backend.vercel.app)
+**🌐 Live Server** [https://fitflex-gym-backend.vercel.app]
 
 **📬 Postman API**
 [Click here](https://geenify.postman.co/workspace/Job-tasks~93785eb5-4937-475a-949a-7faa3e236a71/collection/39784613-5296fdd1-299e-418a-a186-b742b65ae532?action=share&creator=39784613)
 
+## 🧪 Testing Example with Postman
 
+### 1. Login to Get JWT Token
+
+- **Request:** `POST {{baseUrl}}/auth/login`
+- **Body (JSON):**
+
+```json
+{
+  "email": "admin@gmail.com",
+  "password": "123456"
+}
+```
+### Expected Response:
+```json
+{
+    "success": true,
+    "message": "User logged in successfully",
+    "statusCode": 200,
+    "Data": {
+        "accessToken": "_access_token_"
+    }
+}
+```
+### Creating Trainer example
+#### 🔐 Set Access Token in Header With variable of Authorization
+- **Request:** `POST {{baseURL}}/users/create-trainer`
+- **Body (JSON):**
+
+```json
+{
+  "name": "MrTrainer",
+  "email": "mrtrainer111@gmail.com",
+  "password": "123456"
+}
+
+
+```
+### Expected Response:
+```json
+{
+    "success": true,
+    "message": "Trainer created successfully",
+    "statusCode": 200,
+    "Data": {
+        "id": "64cecf82-e42c-479e-b46e-d7135241fd7a",
+        "name": "MrTrainer",
+        "email": "mrtrainer111@gmail.com",
+        "password": "$2b$10$6WBUoBQIVbQZYftu9chDh.PxziOikkVLA76ZbFHaiIiL6OVQmfAh6",
+        "role": "Trainer",
+        "createdAt": "2025-07-19T17:43:44.559Z",
+        "updatedAt": "2025-07-19T17:43:44.559Z"
+    }
+}
+```
+### Add Schedule classes example
+#### 🔐 Set Access Token in Header With variable of Authorization
+- **Request:** `POST {{baseURL}}/class-schedules/add-class-schedule`
+- **Body (JSON):**
+
+```json
+{
+  "date": "2025-07-22",
+  "startTime": "07:00:00",
+  "endTime": "09:00:00",
+  "trainerId": "trainer_id"
+}
+
+
+```
+### Expected Response:
+```json
+{
+    "success": true,
+    "message": "Class schedule added successfully",
+    "statusCode": 200,
+    "Data": {
+        "id": "9ed800a1-71c5-4851-bf84-e4398492af23",
+        "date": "2025-07-22T00:00:00.000Z",
+        "startTime": "2025-07-22T07:00:00.000Z",
+        "endTime": "2025-07-22T09:00:00.000Z",
+        "trainerId": "68d3bfb2-245a-43b6-9eee-6556387ea418",
+        "createdAt": "2025-07-19T17:47:33.453Z",
+        "updatedAt": "2025-07-19T17:47:33.453Z"
+    }
+}
+```
+### Add Booking example
+#### 🔐 Set Access Token in Header With variable of Authorization
+- **Request:** `POST {{baseURL}}/bookings/book-class-schedule`
+- **Body (JSON):**
+
+```json
+{
+    "classScheduleId": "_class_schedule_id_"
+}
+```
+### Expected Response:
+```json
+{
+    "success": true,
+    "message": "Class schedule booked successfully",
+    "statusCode": 200,
+    "Data": {
+        "id": "73ad57f9-bdd4-497c-983d-de45f3c80116",
+        "classScheduleId": "5ce0c9f9-3283-4551-98f8-c02d0c62f4f4",
+        "traineeId": "74a76f29-5941-4cf7-8bd8-9aa1b4d51862",
+        "createdAt": "2025-07-19T17:50:48.619Z",
+        "updatedAt": "2025-07-19T17:50:48.619Z"
+    }
+}
+```
+
+## 👨‍💻 Developer
+
+**Rafioul Hasan Sourob**  
+📧 rafioulhasan2@gmail.com 
+📞 +8801752966422
+🔗 [Portfolio](https://rafioul-sourav-portfolio.vercel.app)  
 
